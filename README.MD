@@ -4,6 +4,6 @@
 Can I create a simple autograd engine in c++? lets find out.   
 
 
-inspirations:   
+## inspirations
 micrograd   
 tinygrad   
