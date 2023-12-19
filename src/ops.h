@@ -5,6 +5,7 @@
 #include <memory>
 #include "tensor.h"
 
+// inspired from tinygrad
 class Function {
   protected:
 
@@ -47,18 +48,19 @@ class Mul : public Function {
     Tensor x, y;
 
   public:
-    /* using Function::Function; // Inherit constructors */
     Mul(const std::vector<Tensor*>& tensors)
         : Function(tensors) {}
 
     Tensor forward(const std::vector<Tensor>& args) override {
         this->x = args[0];
         this->y = args[1];
-        return x * y;
+        // should probably have something similar to tinygrad's Tensor/LazyData.e() method
+        // so we can do elementwise operations without these ops if needed.
+        return Tensor(x.data * y.data);
     }
 
     std::vector<Tensor*> backward(const Tensor& grad_output) override {
-      return {new Tensor(this->y * grad_output), new Tensor(this->x * grad_output)};
+      return {new Tensor(this->y.data * grad_output.data), new Tensor(this->x.data * grad_output.data)};
     }
 };
 

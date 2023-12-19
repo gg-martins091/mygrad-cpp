@@ -4,8 +4,10 @@
 #include <iostream>
 #include <vector>
 #include <memory>
+#include <set>
 
 class Function;
+/* class Mul; */
 
 class Tensor {
   private:
@@ -60,14 +62,26 @@ class Tensor {
         delete grad;
     }
 
+    Tensor operator*(const Tensor& other);
+
+    // TODO: create ops for these operations
     Tensor operator+(const Tensor& other) { return Tensor(data + other.data, {this, const_cast<Tensor*>(&other)}); }
     Tensor operator-(const Tensor& other) { return Tensor(data - other.data, {this, const_cast<Tensor*>(&other)}); }
-    Tensor operator*(const Tensor& other) { return Tensor(data * other.data, {this, const_cast<Tensor*>(&other)}); }
     Tensor operator/(const Tensor& other) { return Tensor(data / other.data, {this, const_cast<Tensor*>(&other)}); }
 
     friend std::ostream& operator<<(std::ostream& os, const Tensor& tensor);
 
     void backward();
+
+    // inspired from tinygrad
+    static std::vector<Tensor*> _deepwalk(
+        Tensor* tensor,
+        std::set<const Tensor*>& visited,
+        std::vector<Tensor*>& nodes
+    );
+    std::vector<Tensor*> deepwalk();
+
+
 };
 
 
